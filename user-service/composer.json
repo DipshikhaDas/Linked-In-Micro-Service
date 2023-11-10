@@ -1,0 +1,9 @@
+{
+    "require-dev": {
+        "laravel/breeze": "^1.26"
+    },
+    "require": {
+        "predis/predis": "^2.2",
+        "league/flysystem-aws-s3-v3": "^3.19"
+    }
+}
