@@ -5,21 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use MongoDB\Laravel\Eloquent\Model;
 
-class Post extends Model
+class Image extends Model
 {
     protected $connection = 'mongodb';
-    protected $collection = 'posts';
+    protected $collection = 'images';
 
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'content',
-        'timestamps'
+        'path',
+        'post_id',
+        'timestamps',
     ];
-
-    public function images() {
-        return $this->embedsMany(Image::class);
-    }
 
 }
