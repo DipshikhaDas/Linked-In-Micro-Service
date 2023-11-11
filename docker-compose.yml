@@ -148,6 +148,54 @@ services:
       linkedIn:
         ipv4_address: 172.20.0.11
 
+  minio:
+    image: quay.io/minio/minio:RELEASE.2023-10-25T06-33-25Z
+    volumes:
+      - ./post-service/imagedb:/data
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    networks:
+      linkedIn:
+        ipv4_address: 172.20.0.50
+    container_name: minio
+
+  notification-service-nginx-node:
+    build:
+      context: .
+      dockerfile: Dockerfile.node.nginx
+    container_name: notification-service-nginx-node
+    # ports:
+    #   - "12301:80"
+    volumes:
+      - ./src:/usr/share/nginx/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - notification-service-php
+    networks:
+      arnab:
+        ipv4_address: 172.20.0.60
+
+  php-notification-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: notification-service-php
+    user: "setu:setu"
+    volumes:
+      - ./src:/usr/share/nginx/html
+    # ports:
+    #   - "9000:9000"
+    working_dir: /usr/share/nginx/html
+    networks:
+      arnab:
+        ipv4_address: 172.20.0.70
+    environment:
+      - USER_SERVICE_URL="http://dslinked.in/user-service/"
+      - POST_SERVICE_URL="http://dslinked.in/"
+      - NOTIF_SERVICE_URL="http://dslinked.in/notification-service/"
+
   nginx-rev:
     image: nginx:alpine3.18
     container_name: nginx-rev

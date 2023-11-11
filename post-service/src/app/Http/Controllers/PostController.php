@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Image;
+use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -11,7 +14,9 @@ class PostController extends Controller
      */
     public function index()
     {
-        //
+        $posts = Post::orderBy('created_at', 'desc')->get();
+
+        return view('dashboard', ['posts' => $posts,]);
     }
 
     /**
@@ -27,7 +32,31 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'content' => 'string|nullable',
+            'images.*' => 'file|image|nullable',
+        ]);
+
+        $post = new Post();
+        $post->content = $request->input('content');
+        $post->user_id = Auth()->user()->_id;
+        $post->save();
+
+        $pictures = $request->file('images');
+
+        foreach ($pictures as $picture)
+        {
+            $path = Storage::disk('minio')->put('photos', $picture);
+
+            $photo = new Image();
+            $photo->post_id = $post->_id;
+            $photo->path = $path;
+            $photo->save();
+
+        }
+
+
+        return redirect()->back();
     }
 
     /**

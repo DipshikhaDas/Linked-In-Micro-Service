@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,10 +24,11 @@ Route::get('/dashboard', function () {
 });
 
 
-Route::get('/', function () {
-    return view('dashboard');
-})->name('dashboard');
+Route::get('/', [PostController::class, 'index'])->name('dashboard');
 
+Route::middleware(['auth'])->group(function(){
+    Route::post('/post', [PostController::class, 'store'])->name('store-post');
+});
 
 Route::middleware(['user-redirect', 'auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

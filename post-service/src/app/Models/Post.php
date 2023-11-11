@@ -19,7 +19,11 @@ class Post extends Model
     ];
 
     public function images() {
-        return $this->embedsMany(Image::class);
+        return $this->hasMany(Image::class);
+    }
+
+    public function user() {
+        return $this->belongsTo(User::class);
     }
 
 }
