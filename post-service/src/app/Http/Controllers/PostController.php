@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Image;
+use App\Models\Notification;
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
@@ -44,17 +47,30 @@ class PostController extends Controller
 
         $pictures = $request->file('images');
 
-        foreach ($pictures as $picture)
-        {
-            $path = Storage::disk('minio')->put('photos', $picture);
+        if ($pictures != null) {
+            foreach ($pictures as $picture) {
+                $path = Storage::disk('minio')->put('photos', $picture);
 
-            $photo = new Image();
-            $photo->post_id = $post->_id;
-            $photo->path = $path;
-            $photo->save();
-
+                $photo = new Image();
+                $photo->post_id = $post->_id;
+                $photo->path = $path;
+                $photo->save();
+            }
         }
 
+        $author = Auth::user()->name;
+        $usersToNotify = User::where('_id', '!=', auth()->id())->get();
+
+        foreach ($usersToNotify as $user) {
+            $notification = new Notification();
+            $notification->content = $author . ' has a new post';
+            $notification->user_id = $user->_id;
+            $notification->read_at = null;
+
+            // dd($notification, $post);
+            $notification->save();
+
+        }
 
         return redirect()->back();
     }

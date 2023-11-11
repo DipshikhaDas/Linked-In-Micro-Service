@@ -4,6 +4,5 @@ user-service-shell:
 post-service-shell:
 	docker compose exec -it php-post-service bash
 
-# restart-rev-proxy:
-# 	cd reverse-proxy && docker compose down
-# 	cd reverse-proxy && docker compose up -d 
+notification-service-shell:
+	docker compose exec -it php-notification-service bash

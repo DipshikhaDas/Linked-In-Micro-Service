@@ -1,30 +1,30 @@
 version: '3'
 
 networks:
-  linkedIn:
+  arnab:
     external: true
 
 services:
-  postdb-mongo-express:
+  notificationdb-mongo-express:
     image: mongo-express
-    container_name: postdb-mongo-express
+    container_name: notificationdb-mongo-express
     environment:
       - ME_CONFIG_MONGODB_ADMINUSERNAME=root
       - ME_CONFIG_MONGODB_ADMINPASSWORD=password
-      - ME_CONFIG_MONGODB_URL=mongodb://root:password@postdb:27017/?authSource=admin
+      - ME_CONFIG_MONGODB_URL=mongodb://root:password@notificationdb:27017/?authSource=admin
       - ME_CONFIG_BASICAUTH_USERNAME=mexpress
       - ME_CONFIG_BASICAUTH_PASSWORD=mexpress
     depends_on:
-      - postdb
+      - notificationdb
     restart: unless-stopped
     # ports:
     #   - "8085:8081"  
     networks:
-      linkedIn:
-        ipv4_address: 172.20.0.10
-  postdb:
+      arnab:
+        ipv4_address: 172.20.0.65
+  notificationdb:
     image: mongo:5.0
-    container_name: postdb
+    container_name: notificationdb
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=password
@@ -37,5 +37,5 @@ services:
       - ./database/mongodb/production:/Databases/production
     command: [ "--auth" ]
     networks:
-      linkedIn:
-        ipv4_address: 172.20.0.11
+      arnab:
+        ipv4_address: 172.20.0.75
